@@ -16,7 +16,7 @@ struct DeauthAttackPacket
     uint8_t  trs[6];
     uint8_t  bssid[6];
     uint16_t  seq;
-    uint16_t  man;
+    uint8_t  man[2];
 };
 
 #endif //SRC_PACKET_H
