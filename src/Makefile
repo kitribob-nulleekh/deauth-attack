@@ -2,7 +2,7 @@ LDLIBS=-lpcap
 
 all: deauth-attack
 
-deauth-attack: mac.o
+deauth-attack: packet.h mac.o
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:
